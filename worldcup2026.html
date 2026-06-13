@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FIFA World Cup 2026 — Match Calendar</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #E8C84A;
+    --gold-light: #F5DC70;
+    --dark: #10131f;
+    --dark3: #1c2035;
+    --surface: #21263d;
+    --surface2: #292f47;
+    --text: #f0f2fa;
+    --muted: #9ba4c0;
+    --border: rgba(232,200,74,0.2);
+    --brazil-bg: #d0f5e2; --brazil-bd: #007a30; --brazil-tx: #003d18;
+    --colombia-bg: #fff8cc; --colombia-bd: #b07c00; --colombia-tx: #5a3e00;
+    --spain-bg:   #fde0e0; --spain-bd:   #a01020; --spain-tx:   #5a0010;
+    --ecuador-bg: #ddeeff; --ecuador-bd: #1a5cb0; --ecuador-tx: #0a2d60;
+    --panama-bg:  #ffe0ea; --panama-bd:  #b00030; --panama-tx:  #600018;
+    --mexico-bg:  #d0f5e2; --mexico-bd:  #006030; --mexico-tx:  #003018;
+    --germany-bg: #f0f0f0; --germany-bd: #222222; --germany-tx: #111111;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(232,200,74,0.07) 0%, transparent 60%);
+    pointer-events:none; z-index:0;
+  }
+
+  .container { max-width:1200px; margin:0 auto; padding:0 20px; position:relative; z-index:1; }
+
+  /* ── HEADER ── */
+  header { padding:40px 0 28px; text-align:center; }
+  .header-badge {
+    display:inline-block;
+    background:linear-gradient(135deg,var(--gold),var(--gold-light));
+    color:#111; font-family:'Bebas Neue',sans-serif;
+    font-size:11px; letter-spacing:3px;
+    padding:5px 16px; border-radius:20px; margin-bottom:14px;
+  }
+  h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(40px,8vw,84px); line-height:.9; letter-spacing:2px; }
+  h1 span {
+    display:block;
+    background:linear-gradient(135deg,var(--gold) 0%,var(--gold-light) 50%,var(--gold) 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .header-sub { margin-top:10px; color:var(--muted); font-size:13px; letter-spacing:.5px; }
+  .header-stats { display:flex; justify-content:center; gap:24px; margin-top:20px; flex-wrap:wrap; }
+  .stat-pill {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:8px; padding:7px 16px; font-size:12px; color:var(--muted);
+  }
+  .stat-pill strong { color:var(--gold); font-size:18px; font-family:'Bebas Neue',sans-serif; display:block; }
+
+  /* ── CONTROLS ── */
+  .controls {
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    margin:28px 0 20px; padding:18px 20px;
+    background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  }
+  .controls-label { font-size:11px; letter-spacing:2px; color:var(--muted); font-weight:600; text-transform:uppercase; }
+  .filter-btn {
+    background:var(--dark3); border:1px solid rgba(255,255,255,0.08);
+    color:var(--muted); padding:6px 13px; border-radius:8px;
+    font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500;
+    cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:5px;
+  }
+  .filter-btn:hover { border-color:var(--gold); color:var(--text); }
+  .filter-btn.active { background:rgba(232,200,74,.15); border-color:var(--gold); color:var(--gold); }
+  .spacer { flex:1; min-width:10px; }
+  .stage-filter { display:flex; gap:6px; flex-wrap:wrap; }
+  .stage-btn {
+    background:var(--dark3); border:1px solid rgba(255,255,255,0.08);
+    color:var(--muted); padding:5px 12px; border-radius:6px;
+    font-family:'DM Sans',sans-serif; font-size:12px; cursor:pointer; transition:all .2s;
+  }
+  .stage-btn:hover { border-color:var(--gold); color:var(--text); }
+  .stage-btn.active { background:rgba(232,200,74,.15); border-color:var(--gold); color:var(--gold); }
+
+  /* ── LEGEND ── */
+  .legend { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:22px; font-size:12px; color:var(--muted); align-items:center; }
+  .legend-item { display:flex; align-items:center; gap:5px; }
+  .legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+  /* ── DATE GROUP ── */
+  .date-group { margin-bottom:28px; }
+  .date-header {
+    display:flex; align-items:baseline; gap:12px; margin-bottom:10px;
+    padding-bottom:8px; border-bottom:1px solid rgba(232,200,74,0.12);
+  }
+  .date-day { font-family:'Bebas Neue',sans-serif; font-size:30px; color:var(--gold); line-height:1; }
+  .date-full { font-size:13px; color:var(--muted); }
+  .match-count { margin-left:auto; background:var(--surface); border:1px solid var(--border); color:var(--muted); font-size:11px; padding:2px 9px; border-radius:10px; }
+
+  /* ── STAGE HEADER ── */
+  .stage-header {
+    font-family:'Bebas Neue',sans-serif; font-size:19px; letter-spacing:3px;
+    color:var(--muted); margin:36px 0 14px; padding:10px 0;
+    border-top:1px solid rgba(255,255,255,0.06);
+    display:flex; align-items:center; gap:12px;
+  }
+  .stage-header::after { content:''; flex:1; height:1px; background:rgba(255,255,255,0.05); }
+
+  /* ── MATCH CARD ── */
+  .matches-grid { display:grid; gap:10px; }
+
+  .match-card {
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,0.07);
+    border-left:4px solid transparent;
+    background:var(--surface);
+    overflow:hidden;
+    transition:transform .2s, box-shadow .2s;
+  }
+  .match-card:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(0,0,0,0.35); }
+
+  /* main row */
+  .card-main {
+    display:grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items:center;
+    gap:12px;
+    padding:14px 18px 10px;
+  }
+
+  /* venue row — always visible */
+  .card-venue {
+    display:flex; align-items:center; gap:6px;
+    padding:0 18px 10px;
+    font-size:11.5px; color:var(--muted);
+    border-top:1px solid rgba(255,255,255,0.05);
+    padding-top:8px;
+  }
+  .card-venue .venue-icon { font-size:13px; flex-shrink:0; }
+  .card-venue .venue-name { font-weight:600; }
+  .card-venue .venue-sep { opacity:.4; margin:0 2px; }
+  .card-venue .venue-city { }
+  .card-venue .venue-cap { margin-left:auto; opacity:.6; font-size:11px; }
+
+  /* head-to-head — subtle collapsible */
+  .toggle-h2h {
+    display:flex; align-items:center; gap:5px;
+    width:100%; padding:5px 18px;
+    background:transparent; border:none; cursor:pointer;
+    font-family:'DM Sans',sans-serif; font-size:10.5px; font-weight:500;
+    letter-spacing:.3px; color:var(--muted); opacity:.7;
+    transition:opacity .15s, background .15s;
+    border-top:1px solid rgba(255,255,255,0.04);
+  }
+  .toggle-h2h:hover { opacity:1; background:rgba(255,255,255,0.03); }
+  .toggle-h2h .h2h-icon { font-size:11px; }
+  .card-h2h {
+    display:none;
+    padding:0 18px 10px 32px;
+    font-size:11.5px; color:var(--muted);
+    line-height:1.4;
+  }
+  .card-h2h.open { display:block; }
+  .h2h-line { margin-bottom:6px; }
+  .h2h-line:last-child { margin-bottom:0; }
+  .h2h-line strong { color:var(--text); font-weight:700; }
+  .h2h-line em { font-style:italic; opacity:.85; }
+  .match-card.highlighted .h2h-line strong { color:#111 !important; }
+
+  /* score entry */
+  .card-score {
+    display:flex; align-items:center; gap:8px;
+    padding:8px 18px; border-top:1px solid rgba(255,255,255,0.05);
+    font-size:11.5px; color:var(--muted);
+  }
+  .score-label { font-weight:600; letter-spacing:.3px; }
+  .score-input {
+    width:38px; text-align:center; font-family:'Bebas Neue',sans-serif;
+    font-size:15px; color:var(--text); background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.12); border-radius:6px; padding:3px 2px;
+  }
+  .score-input::-webkit-outer-spin-button, .score-input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+  .score-input[type=number] { -moz-appearance:textfield; }
+  .score-input:focus { outline:none; border-color:var(--gold); }
+  .score-dash { opacity:.5; }
+  .score-status { font-size:10px; color:var(--gold); margin-left:4px; }
+  .match-card.highlighted .card-score { color:#444 !important; border-top-color:rgba(0,0,0,0.08) !important; }
+  .match-card.highlighted .score-input { background:rgba(0,0,0,0.06); border-color:rgba(0,0,0,0.18); color:#111; }
+  .match-card.highlighted .score-status { color:#0a6b30 !important; }
+  .match-card.highlighted .toggle-h2h { color:#555 !important; border-top-color:rgba(0,0,0,0.08) !important; }
+  .match-card.highlighted .toggle-h2h:hover { background:rgba(0,0,0,0.05) !important; }
+  .match-card.highlighted .card-h2h { color:#444 !important; }
+
+  /* players panel */
+  .card-players {
+    display:none;
+    padding:10px 18px 14px;
+    border-top:1px solid rgba(0,0,0,0.08);
+    gap:12px;
+  }
+  .card-players.open { display:grid; grid-template-columns:1fr 1fr; }
+
+  .players-col { display:flex; flex-direction:column; gap:6px; }
+  .players-col-title {
+    font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase;
+    opacity:.6; margin-bottom:2px;
+  }
+  .player-chip {
+    display:flex; flex-direction:column; gap:1px;
+    background:rgba(0,0,0,0.06); border-radius:7px; padding:6px 9px;
+  }
+  .player-name { font-size:12px; font-weight:700; }
+  .jersey-num {
+    display:inline-block; background:var(--gold); color:#111;
+    font-size:10px; font-weight:800; padding:1px 5px; border-radius:4px;
+    margin-right:2px; font-family:'Bebas Neue',sans-serif; letter-spacing:.5px;
+  }
+  .match-card.highlighted .jersey-num { background:#222; color:#fff; }
+  .player-role { font-size:10.5px; opacity:.65; }
+  .player-stat { font-size:11px; font-weight:600; margin-top:1px; }
+
+  /* toggle btn */
+  .toggle-players {
+    display:flex; align-items:center; justify-content:center; gap:5px;
+    width:100%; padding:6px 18px;
+    background:rgba(0,0,0,0.06); border:none; cursor:pointer;
+    font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600;
+    letter-spacing:.5px; transition:background .15s;
+    border-top:1px solid rgba(0,0,0,0.06);
+  }
+  .toggle-players:hover { background:rgba(0,0,0,0.12); }
+  .toggle-icon { transition:transform .2s; display:inline-block; }
+  .toggle-icon.open { transform:rotate(180deg); }
+
+  /* team block */
+  .team-block { display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .team-block.home { align-items:flex-end; text-align:right; }
+  .team-block.away { align-items:flex-start; text-align:left; }
+  .team-flag { font-size:28px; line-height:1; }
+  .team-name { font-size:13px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:120px; }
+
+  /* center block */
+  .vs-block { display:flex; flex-direction:column; align-items:center; gap:3px; min-width:80px; }
+  .vs-time { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--gold); letter-spacing:1px; line-height:1; }
+  .vs-label { font-size:10px; color:var(--muted); letter-spacing:1.5px; }
+  .group-badge {
+    background:rgba(232,200,74,.12); border:1px solid rgba(232,200,74,.25);
+    color:var(--gold); font-size:10px; font-weight:700; padding:2px 7px; border-radius:4px;
+  }
+
+  /* tbd */
+  .match-card.tbd { opacity:.55; }
+  .tbd-team { font-size:11px; font-style:italic; text-align:center; }
+
+  /* ── DARK CARD DEFAULTS ── */
+  .match-card .card-venue { color:var(--muted); }
+  .match-card .toggle-players { color:var(--muted); }
+  .match-card .player-chip { background:rgba(255,255,255,0.06); }
+  .match-card .player-name { color:var(--text); }
+  .match-card .player-role { color:var(--muted); }
+  .match-card .player-stat { color:var(--gold); }
+  .match-card .players-col-title { color:var(--muted); }
+
+  /* ── HIGHLIGHTED CARDS — full light bg, all text dark ── */
+  .match-card.highlighted {
+    color:#111;
+  }
+  /* per-team light backgrounds + border color */
+  .hl-brazil   { background:var(--brazil-bg)  !important; border-left-color:var(--brazil-bd)  !important; }
+  .hl-colombia { background:var(--colombia-bg)!important; border-left-color:var(--colombia-bd)!important; }
+  .hl-spain    { background:var(--spain-bg)   !important; border-left-color:var(--spain-bd)   !important; }
+  .hl-ecuador  { background:var(--ecuador-bg) !important; border-left-color:var(--ecuador-bd) !important; }
+  .hl-panama   { background:var(--panama-bg)  !important; border-left-color:var(--panama-bd)  !important; }
+  .hl-mexico   { background:var(--mexico-bg)  !important; border-left-color:var(--mexico-bd)  !important; }
+  .hl-germany  { background:var(--germany-bg) !important; border-left-color:var(--germany-bd) !important; }
+
+  /* force ALL text inside highlighted cards to dark */
+  .match-card.highlighted .team-name,
+  .match-card.highlighted .vs-time,
+  .match-card.highlighted .vs-label,
+  .match-card.highlighted .group-badge,
+  .match-card.highlighted .card-venue,
+  .match-card.highlighted .venue-name,
+  .match-card.highlighted .venue-city,
+  .match-card.highlighted .venue-cap,
+  .match-card.highlighted .toggle-players,
+  .match-card.highlighted .players-col-title,
+  .match-card.highlighted .player-name,
+  .match-card.highlighted .player-role,
+  .match-card.highlighted .tbd-team { color:#222 !important; }
+
+  .match-card.highlighted .vs-time { color:#111 !important; font-size:22px; }
+  .match-card.highlighted .group-badge { background:rgba(0,0,0,0.08) !important; border-color:rgba(0,0,0,0.18) !important; color:#333 !important; }
+  .match-card.highlighted .card-venue { border-top-color:rgba(0,0,0,0.1) !important; }
+  .match-card.highlighted .toggle-players { background:rgba(0,0,0,0.07) !important; border-top-color:rgba(0,0,0,0.08) !important; color:#333 !important; }
+  .match-card.highlighted .toggle-players:hover { background:rgba(0,0,0,0.13) !important; }
+  .match-card.highlighted .card-players { border-top-color:rgba(0,0,0,0.1) !important; }
+  .match-card.highlighted .player-chip { background:rgba(0,0,0,0.07) !important; }
+  .match-card.highlighted .player-stat { color:#000 !important; font-weight:700; }
+  .match-card.highlighted .date-sep { background:rgba(0,0,0,0.1); }
+
+  /* tracked team name gets team color (dark shade) */
+  .hl-brazil   .team-name.tracked { color:var(--brazil-tx)  !important; }
+  .hl-colombia .team-name.tracked { color:var(--colombia-tx)!important; }
+  .hl-spain    .team-name.tracked { color:var(--spain-tx)   !important; }
+  .hl-ecuador  .team-name.tracked { color:var(--ecuador-tx) !important; }
+  .hl-panama   .team-name.tracked { color:var(--panama-tx)  !important; }
+  .hl-mexico   .team-name.tracked { color:var(--mexico-tx)  !important; }
+  .hl-germany  .team-name.tracked { color:var(--germany-tx) !important; }
+
+  /* empty state */
+  .empty-state { text-align:center; padding:60px 20px; color:var(--muted); }
+  .empty-state h3 { font-family:'Bebas Neue',sans-serif; font-size:24px; margin-bottom:8px; color:var(--text); }
+
+  footer { text-align:center; padding:36px 0 28px; color:var(--muted); font-size:12px; border-top:1px solid rgba(255,255,255,0.05); margin-top:36px; }
+
+  @media(max-width:600px){
+    .card-main { grid-template-columns:1fr auto 1fr; gap:8px; padding:12px 14px 8px; }
+    .team-flag { font-size:22px; }
+    .team-name { font-size:12px; max-width:80px; }
+    .vs-time { font-size:18px; }
+    .card-players.open { grid-template-columns:1fr; }
+    .controls { flex-direction:column; align-items:flex-start; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="header-badge">NORTH AMERICA 2026</div>
+    <h1>FIFA WORLD CUP<span>2026</span></h1>
+    <p class="header-sub">104 matches · 16 stadiums · June 11 – July 19 · All times Eastern (ET)</p>
+    <div class="header-stats">
+      <div class="stat-pill"><strong>104</strong>Matches</div>
+      <div class="stat-pill"><strong>48</strong>Teams</div>
+      <div class="stat-pill"><strong>16</strong>Stadiums</div>
+      <div class="stat-pill"><strong>39</strong>Days</div>
+    </div>
+  </header>
+
+  <div class="controls">
+    <span class="controls-label">My Teams</span>
+    <button class="filter-btn" data-team="Brazil"   onclick="toggleTeam(this)">🇧🇷 Brazil</button>
+    <button class="filter-btn" data-team="Colombia" onclick="toggleTeam(this)">🇨🇴 Colombia</button>
+    <button class="filter-btn" data-team="Spain"    onclick="toggleTeam(this)">🇪🇸 España</button>
+    <button class="filter-btn" data-team="Ecuador"  onclick="toggleTeam(this)">🇪🇨 Ecuador</button>
+    <button class="filter-btn" data-team="Panama"   onclick="toggleTeam(this)">🇵🇦 Panamá</button>
+    <button class="filter-btn" data-team="Mexico"   onclick="toggleTeam(this)">🇲🇽 México</button>
+    <button class="filter-btn" data-team="Germany"  onclick="toggleTeam(this)">🇩🇪 Germany</button>
+    <div class="spacer"></div>
+    <div class="stage-filter">
+      <button class="stage-btn active" data-stage="all"           onclick="filterStage(this)">All</button>
+      <button class="stage-btn"        data-stage="Group Stage"   onclick="filterStage(this)">Groups</button>
+      <button class="stage-btn"        data-stage="Round of 32"   onclick="filterStage(this)">R32</button>
+      <button class="stage-btn"        data-stage="Round of 16"   onclick="filterStage(this)">R16</button>
+      <button class="stage-btn"        data-stage="Quarterfinals" onclick="filterStage(this)">QF</button>
+      <button class="stage-btn"        data-stage="Semifinals"    onclick="filterStage(this)">SF</button>
+      <button class="stage-btn"        data-stage="Final"         onclick="filterStage(this)">Final</button>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span>Highlights:</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#007a30"></span>Brazil</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#b07c00"></span>Colombia</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#a01020"></span>España</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#1a5cb0"></span>Ecuador</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#b00030"></span>Panamá</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#006030"></span>México</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#222222"></span>Germany</span>
+    <span style="margin-left:8px;font-size:11px;">▼ Click any match to see players to watch</span>
+  </div>
+
+  <div id="schedule-container"></div>
+
+  <footer>
+    FIFA World Cup 2026 · USA, Mexico & Canada · All times Eastern (ET)
+    <br><span style="opacity:.5;font-size:11px;">Knockout stage matchups confirmed after group play</span>
+  </footer>
+</div>
+
+<script>
+// ── STADIUM DATA ─────────────────────────────────────────────────────────────
+const STADIUMS = {
+  "Estadio Azteca":          { city:"Mexico City, Mexico",      cap:"87,523" },
+  "Estadio Akron":           { city:"Zapopan, Mexico",          cap:"49,850" },
+  "Estadio BBVA":            { city:"Monterrey, Mexico",        cap:"53,500" },
+  "BMO Field":               { city:"Toronto, Canada",          cap:"45,736" },
+  "BC Place":                { city:"Vancouver, Canada",        cap:"54,500" },
+  "Levi's Stadium":          { city:"Santa Clara, CA",          cap:"68,500" },
+  "SoFi Stadium":            { city:"Inglewood, CA",            cap:"70,240" },
+  "MetLife Stadium":         { city:"East Rutherford, NJ",      cap:"82,500" },
+  "Gillette Stadium":        { city:"Foxborough, MA",           cap:"65,878" },
+  "NRG Stadium":             { city:"Houston, TX",              cap:"72,220" },
+  "AT&T Stadium":            { city:"Arlington, TX",            cap:"80,000" },
+  "Lincoln Financial Field": { city:"Philadelphia, PA",         cap:"69,796" },
+  "Arrowhead Stadium":       { city:"Kansas City, MO",          cap:"76,416" },
+  "Lumen Field":             { city:"Seattle, WA",              cap:"68,740" },
+  "Mercedes-Benz Stadium":   { city:"Atlanta, GA",              cap:"71,000" },
+  "Hard Rock Stadium":       { city:"Miami Gardens, FL",        cap:"65,326" },
+};
+
+// ── FLAGS ────────────────────────────────────────────────────────────────────
+const FLAGS = {
+  "Mexico":"🇲🇽","South Africa":"🇿🇦","South Korea":"🇰🇷","Czechia":"🇨🇿",
+  "Canada":"🇨🇦","Bosnia & Herzegovina":"🇧🇦","USA":"🇺🇸","Paraguay":"🇵🇾",
+  "Qatar":"🇶🇦","Switzerland":"🇨🇭","Brazil":"🇧🇷","Morocco":"🇲🇦",
+  "Haiti":"🇭🇹","Scotland":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","Australia":"🇦🇺","Türkiye":"🇹🇷",
+  "Germany":"🇩🇪","Curaçao":"🇨🇼","Netherlands":"🇳🇱","Japan":"🇯🇵",
+  "Ivory Coast":"🇨🇮","Ecuador":"🇪🇨","Sweden":"🇸🇪","Tunisia":"🇹🇳",
+  "Spain":"🇪🇸","Cape Verde":"🇨🇻","Belgium":"🇧🇪","Egypt":"🇪🇬",
+  "Saudi Arabia":"🇸🇦","Uruguay":"🇺🇾","Iran":"🇮🇷","New Zealand":"🇳🇿",
+  "France":"🇫🇷","Senegal":"🇸🇳","Iraq":"🇮🇶","Norway":"🇳🇴",
+  "Argentina":"🇦🇷","Algeria":"🇩🇿","Austria":"🇦🇹","Jordan":"🇯🇴",
+  "Portugal":"🇵🇹","DR Congo":"🇨🇩","England":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Croatia":"🇭🇷",
+  "Ghana":"🇬🇭","Panama":"🇵🇦","Uzbekistan":"🇺🇿","Colombia":"🇨🇴",
+};
+
+// ── TRACKED TEAMS & CLASS MAP ─────────────────────────────────────────────────
+const TRACKED    = ["Brazil","Colombia","Spain","Ecuador","Panama","Mexico","Germany"];
+const TEAM_CLASS = { Brazil:"hl-brazil", Colombia:"hl-colombia", Spain:"hl-spain", Ecuador:"hl-ecuador", Panama:"hl-panama", Mexico:"hl-mexico", Germany:"hl-germany" };
+
+// ── PLAYERS TO WATCH (2–3 per team) ──────────────────────────────────────────
+const PLAYERS = {
+  "Mexico":      [{ n:"Raúl Jiménez", num:9, r:"CF · Atlético Madrid",    s:"22 goals this season" },
+                  { n:"Guillermo Ochoa", num:13, r:"GK · Veteran legend",      s:"5th World Cup, age 40" },
+                  { n:"Gilberto Mora", num:18, r:"FW · Chivas (19 y/o)",     s:"Teen sensation of CONCACAF QF" }],
+  "South Africa":[{ n:"Lyle Foster", num:19, r:"FW · Burnley",             s:"11 club goals 2025–26" },
+                  { n:"Ronwen Williams", num:1, r:"GK · Mamelodi Sundowns",    s:"AFCON heroics, penalty saves" },
+                  { n:"Teboho Mokoena", num:8, r:"MF · Mamelodi Sundowns",    s:"Bafana's engine in midfield" }],
+  "South Korea": [{ n:"Son Heung-min", num:7, r:"FW · LAFC",                s:"WC all-time top scorer for KOR" },
+                  { n:"Lee Kang-in", num:18, r:"MF · PSG",                  s:"Creative playmaker, 14 assists" },
+                  { n:"Kim Min-jae", num:3, r:"CB · Bayern Munich",        s:"One of the world's best CBs" }],
+  "Czechia":     [{ n:"Patrik Schick", num:9, r:"FW · Bayer Leverkusen",    s:"22 goals in Bundesliga" },
+                  { n:"Tomáš Souček", num:28, r:"MF · West Ham",             s:"Box-to-box goal threat" },
+                  { n:"Adam Hložek", num:7, r:"FW · Leverkusen",           s:"Young star, pace & technique" }],
+  "Canada":      [{ n:"Alphonso Davies", num:19, r:"LB · Bayern Munich",       s:"120+ km/h sprint, elite crosses" },
+                  { n:"Jonathan David", num:11, r:"FW · Lille",                s:"28 Ligue 1 goals this season" },
+                  { n:"Tajon Buchanan", num:11, r:"RW · Inter Milan",          s:"Dangerous dribbler & creator" }],
+  "Bosnia & Herzegovina":[{ n:"Edin Džeko", num:17, r:"CF · Veteran",          s:"WC debut, 60+ intl goals" },
+                  { n:"Sandro Kulenovic", num:9, r:"FW · Dinamo Zagreb",       s:"Top scorer in qualification" }],
+  "USA":         [{ n:"Christian Pulisic", num:10, r:"FW · AC Milan",          s:"14 goals + 8 assists in Serie A" },
+                  { n:"Gio Reyna", num:7, r:"MF · Dortmund",            s:"Finally fit, explosive talent" },
+                  { n:"Tyler Adams", num:4, r:"MF · AFC Bournemouth",      s:"Captain, defensive anchor" }],
+  "Paraguay":    [{ n:"Miguel Almirón", num:10, r:"MF · Atlanta United",      s:"MLS assist machine" },
+                  { n:"Antonio Sanabria", num:9, r:"FW · Torino",              s:"Clinical finisher" }],
+  "Qatar":       [{ n:"Akram Afif", num:7, r:"FW · Al-Sadd",             s:"Asian Cup 2023 winner, 3 goals" },
+                  { n:"Almoez Ali", num:19, r:"FW · Al-Duhail",           s:"WC 2022 squad, target man" }],
+  "Switzerland": [{ n:"Xherdan Shaqiri", num:10, r:"FW · Chicago Fire",        s:"WC veteran, big-game goals" },
+                  { n:"Granit Xhaka", num:34, r:"MF · Bayer Leverkusen",    s:"Europa League winner, leader" },
+                  { n:"Breel Embolo", num:7, r:"FW · Monaco",               s:"Power & pace up front" }],
+  "Brazil":      [{ n:"Vinicius Jr.", num:7, r:"FW · Real Madrid",         s:"FIFA Best 2024, 23 LaLiga goals" },
+                  { n:"Rodrygo", num:11, r:"FW · Real Madrid",         s:"UCL star, 16 goals+15 assists" },
+                  { n:"Neymar Jr.", num:10, r:"FW · Al-Hilal",            s:"All-time Brazil top scorer" }],
+  "Morocco":     [{ n:"Hakimi", num:2, r:"RB · PSG",                 s:"Best attacking fullback in world" },
+                  { n:"Hakim Ziyech", num:7, r:"MF · Galatasaray",         s:"Creativity & set-piece danger" },
+                  { n:"Youssef En-Nesyri", num:19, r:"FW · Fenerbahçe",        s:"20+ goals in Turkey" }],
+  "Haiti":       [{ n:"Frantzdy Pierrot", num:9, r:"FW · New England Rev",   s:"Historic CONCACAF qualifier" },
+                  { n:"James Léandre", num:6, r:"MF",                        s:"Midfield creative force" }],
+  "Scotland":    [{ n:"Andy Robertson", num:3, r:"LB · Liverpool",           s:"Champions League stalwart" },
+                  { n:"Scott McTominay", num:4, r:"MF · Napoli",              s:"Serie A title, big-game scorer" },
+                  { n:"Che Adams", num:9, r:"FW · Southampton",         s:"Physical, direct forward" }],
+  "Australia":   [{ n:"Mat Ryan", num:1, r:"GK · Real Sociedad",       s:"WC 2022 hero, consistent shot-stopper" },
+                  { n:"Mitchell Duke", num:13, r:"FW · FC Lorient",          s:"Target man, WC 2022 scorer" }],
+  "Türkiye":     [{ n:"Arda Güler", num:17, r:"FW · Real Madrid",        s:"UCL goals at 19, hottest prospect" },
+                  { n:"Hakan Çalhanoğlu", num:8, r:"MF · Inter Milan",       s:"Champions League winner 2025" },
+                  { n:"Kerem Aktürkoğlu", num:21, r:"FW · Galatasaray",       s:"16 goals, Turkey league top scorer" }],
+  "Germany":     [{ n:"Florian Wirtz", num:17, r:"MF · Bayern Munich",      s:"Bundesliga Player of Year" },
+                  { n:"Jamal Musiala", num:10, r:"MF · Bayern Munich",      s:"18 goals + 14 assists" },
+                  { n:"Antonio Rüdiger", num:2, r:"CB · Real Madrid",         s:"Leader, aerial dominance" }],
+  "Curaçao":     [{ n:"Leandro Bacuna", num:6, r:"MF · Cardiff City",        s:"Veteran captain, first WC" },
+                  { n:"Cuco Martina", num:2, r:"DF · Veteran",             s:"Experienced defender" }],
+  "Netherlands": [{ n:"Virgil van Dijk", num:4, r:"CB · Liverpool",           s:"World's best CB, captain" },
+                  { n:"Cody Gakpo", num:8, r:"FW · Liverpool",           s:"WC 2022 star, 18 PL goals" },
+                  { n:"Xavi Simons", num:7, r:"MF · PSG",                 s:"14 goals+13 assists in Ligue 1" }],
+  "Japan":       [{ n:"Takefusa Kubo", num:15, r:"FW · Real Sociedad",       s:"La Liga's most exciting Asian player" },
+                  { n:"Reo Hatate", num:16, r:"MF · Celtic",              s:"Tireless engine, 10 goals" },
+                  { n:"Kaoru Mitoma", num:18, r:"FW · Brighton",            s:"Premier League wing wizard" }],
+  "Ivory Coast": [{ n:"Sébastien Haller", num:12, r:"FW · Borussia Dortmund", s:"UCL winner, powerful target man" },
+                  { n:"Franck Kessié", num:5, r:"MF · Al-Ahli",            s:"Physical box-to-box dynamo" },
+                  { n:"Simon Adingra", num:24, r:"FW · Brighton",            s:"AFCON 2024 winner, rising star" }],
+  "Ecuador":     [{ n:"Moisés Caicedo", num:23, r:"MF · Chelsea",            s:"£115M man, combative maestro" },
+                  { n:"Enner Valencia", num:13, r:"FW · Internacional",       s:"All-time Ecuador top scorer" },
+                  { n:"Kendry Páez", num:19, r:"MF · Chelsea (17 y/o)",    s:"Youngest WC player to watch" }],
+  "Sweden":      [{ n:"Viktor Gyökeres", num:9, r:"FW · Arsenal",            s:"Sensational: 43 goals this season" },
+                  { n:"Alexander Isak", num:9, r:"FW · Liverpool",           s:"22 PL goals, world-class form" },
+                  { n:"Dejan Kulusevski", num:7, r:"MF · Tottenham",          s:"Assists king, creative spark" }],
+  "Tunisia":     [{ n:"Hannibal Mejbri", num:8, r:"MF · Burnley",           s:"Engine & heartbeat of Tunisia" },
+                  { n:"Seifeddine Jaziri", num:9, r:"FW · Sharjah",           s:"Experienced aerial threat" }],
+  "Spain":       [{ n:"Lamine Yamal", num:19, r:"FW · Barcelona",          s:"Euro 2024 breakout, 18 y/o genius" },
+                  { n:"Pedri", num:8, r:"MF · Barcelona",           s:"Heartbeat of Spain's midfield" },
+                  { n:"Mikel Oyarzabal", num:7, r:"FW · Real Sociedad",       s:"Euro 2024 final goal scorer" }],
+  "Cape Verde":  [{ n:"Vozinha (Josimar Dias)", num:1, r:"MF",               s:"Veteran leader, first WC" },
+                  { n:"Ryan Mendes", num:17, r:"FW",                       s:"Pace & flair on the wing" }],
+  "Belgium":     [{ n:"Kevin De Bruyne", num:7, r:"MF · Man City",           s:"Elite vision & passing" },
+                  { n:"Romelu Lukaku", num:9, r:"CF · Napoli",             s:"Serie A top scorer again" },
+                  { n:"Dodi Lukébakio", num:20, r:"FW · Sevilla",            s:"Explosive wideman, 14 goals" }],
+  "Egypt":       [{ n:"Mohamed Salah", num:11, r:"FW · Liverpool",          s:"PL Golden Boot, 29 goals" },
+                  { n:"Omar Marmoush", num:7, r:"FW · Man City",           s:"Bundesliga star now at City" }],
+  "Saudi Arabia":[{ n:"Salem Al-Dawsari", num:10, r:"FW · Al-Hilal",         s:"Iconic Argentina 2022 goal" },
+                  { n:"Firas Al-Buraikan", num:7, r:"FW · Al-Fateh",        s:"Saudi league's top scorer" }],
+  "Uruguay":     [{ n:"Darwin Núñez", num:19, r:"FW · Liverpool",          s:"Powerful, explosive center-forward" },
+                  { n:"Federico Valverde", num:15, r:"MF · Real Madrid",      s:"World-class all-rounder" },
+                  { n:"Rodrigo Bentancur", num:5, r:"MF · Tottenham",        s:"Calm control in midfield" }],
+  "Iran":        [{ n:"Mehdi Taremi", num:9, r:"FW · Inter Milan",        s:"UCL winner, prolific scorer" },
+                  { n:"Sardar Azmoun", num:20, r:"FW · Bayer Leverkusen",   s:"Clinical, intelligent forward" }],
+  "New Zealand": [{ n:"Chris Wood", num:9, r:"FW · Nottm Forest",       s:"PL top scorer experience" },
+                  { n:"Joe Bell", num:15, r:"MF · Charlotte FC",       s:"Dynamic midfield leader" }],
+  "France":      [{ n:"Kylian Mbappé", num:10, r:"FW · Real Madrid",       s:"UCL winner, 30+ goals per season" },
+                  { n:"Ousmane Dembélé", num:10, r:"FW · PSG",               s:"Ligue 1 top creator, 18 assists" },
+                  { n:"Rayan Cherki", num:11, r:"MF · PSG",               s:"Explosive 21-year-old" }],
+  "Senegal":     [{ n:"Sadio Mané", num:10, r:"FW · Al-Nassr",          s:"AFCON champion, WC experience" },
+                  { n:"Ismaïla Sarr", num:19, r:"FW · Crystal Palace",    s:"Electric pace, direct threat" }],
+  "Iraq":        [{ n:"Aymen Hussein", num:9, r:"FW · Al-Zawra'a",        s:"AFC Asian qualifier top scorer" },
+                  { n:"Amjad Attwan", num:8, r:"MF",                      s:"Midfield leader" }],
+  "Norway":      [{ n:"Erling Haaland", num:9, r:"CF · Man City",          s:"52 goals in 2025–26 season" },
+                  { n:"Martin Ødegaard", num:8, r:"MF · Arsenal",           s:"Arsenal captain, 16 goals+18 assists" },
+                  { n:"Alexander Sørloth", num:11, r:"FW · Atlético Madrid",  s:"La Liga top scorer race contender" }],
+  "Argentina":   [{ n:"Lionel Messi", num:10, r:"FW · Inter Miami",       s:"Defending WC champion, GOAT" },
+                  { n:"Julián Álvarez", num:9, r:"FW · Atlético Madrid",   s:"WC 2022 hero, 22 LaLiga goals" },
+                  { n:"Enzo Fernández", num:24, r:"MF · Chelsea",           s:"WC winner, £107M midfielder" }],
+  "Algeria":     [{ n:"Riyad Mahrez", num:7, r:"FW · Al-Ahli",          s:"Experienced creator, dribbler" },
+                  { n:"Islam Slimani", num:9, r:"FW · Veteran",           s:"Algeria's all-time top scorer" }],
+  "Austria":     [{ n:"Marcel Sabitzer", num:7, r:"MF · Dortmund",          s:"Goals + pressing intensity" },
+                  { n:"Christoph Baumgartner", num:21, r:"MF · RB Leipzig",  s:"Link-up play, 12 goals" }],
+  "Jordan":      [{ n:"Yazan Al-Naimat", num:10, r:"FW",                     s:"AFC qualifier leading scorer" },
+                  { n:"Ahmad Salam", num:8, r:"MF",                      s:"Midfield organizer" }],
+  "Portugal":    [{ n:"Cristiano Ronaldo", num:7, r:"FW · Al-Nassr",        s:"Final WC? 130+ intl goals" },
+                  { n:"Rafael Leão", num:17, r:"FW · AC Milan",          s:"Serie A star, pace & flair" },
+                  { n:"Bruno Fernandes", num:8, r:"MF · Man United",        s:"Creative engine, set pieces" }],
+  "DR Congo":    [{ n:"Cédric Bakambu", num:19, r:"FW · Marseille",         s:"Veteran experience up front" },
+                  { n:"Arthur Masuaku", num:3, r:"MF · Besiktas",          s:"Dynamic wing-back" }],
+  "England":     [{ n:"Jude Bellingham", num:5, r:"MF · Real Madrid",      s:"UCL winner, 22 goals this season" },
+                  { n:"Harry Kane", num:9, r:"CF · Bayern Munich",     s:"Bundesliga top scorer 35+ goals" },
+                  { n:"Phil Foden", num:47, r:"MF · Man City",          s:"PL Player of the Year" }],
+  "Croatia":     [{ n:"Luka Modrić", num:10, r:"MF · Real Madrid",      s:"Final tournament? Living legend" },
+                  { n:"Ivan Perišić", num:4, r:"FW · Hajduk Split",     s:"Big-game experience" }],
+  "Ghana":       [{ n:"Antoine Semenyo", num:24, r:"FW · Man City",         s:"FA Cup winner, 10 goals" },
+                  { n:"Thomas Partey", num:5, r:"MF · Arsenal",           s:"Dominant midfield anchor" }],
+  "Panama":      [{ n:"Rolando Blackburn", num:7, r:"FW · Al-Qadsiah",    s:"CONCACAF Golden Boot" },
+                  { n:"Adalberto Carrasquilla", num:5, r:"MF · Guadalajara",s:"WC 2022 veteran, energetic MF" },
+                  { n:"Fidel Escobar", num:15, r:"CB · Sao Paulo",        s:"Solid center-back" }],
+  "Uzbekistan":  [{ n:"Eldor Shomurodov", num:11, r:"FW · Roma",            s:"Serie A experience, 9 goals" },
+                  { n:"Abbosbek Fayzullayev", num:7, r:"MF · CSKA Moscow", s:"Quick, technical midfielder" }],
+  "Colombia":    [{ n:"Luis Díaz", num:7, r:"FW · Liverpool",        s:"UCL final scorer, 15 PL goals" },
+                  { n:"James Rodríguez", num:10, r:"MF · Rayo Vallecano",   s:"2014 Golden Boot winner" },
+                  { n:"Jhon Arias", num:11, r:"FW · Fluminense",       s:"Copa Libertadores winner, in-form" }],
+};
+
+
+// ── TEAM WORLD CUP HISTORY ────────────────────────────────────────────────────
+const TEAM_HISTORY = {
+  "Mexico":       { apps:17, best:"Quarterfinals (1970, 1986 — as hosts)", fact:"Co-hosting for a record 3rd time (1970, 1986, 2026)." },
+  "South Africa": { apps:3,  best:"Group Stage (2002, 2010, 2026)",        fact:"Hosted 2010 — first African nation to host the World Cup." },
+  "South Korea":  { apps:11, best:"4th Place (2002, as co-host)",          fact:"Semifinal run in 2002 remains Asia's best-ever World Cup result." },
+  "Czechia":      { apps:11, best:"Runners-up (1934, 1962, as Czechoslovakia)", fact:"First WC appearance since splitting from Slovakia era branding." },
+  "Canada":       { apps:3,  best:"Group Stage (1986, 2022, 2026)",         fact:"Co-hosting 2026; still seeking their first-ever WC win." },
+  "Bosnia & Herzegovina": { apps:2, best:"Group Stage (2014, 2026)",        fact:"Edin Džeko returns for a 2nd WC, 12 years after their debut." },
+  "USA":          { apps:11, best:"3rd Place (1930)",                      fact:"Co-hosting 2026 for the first time since 1994." },
+  "Paraguay":     { apps:9,  best:"Round of 16 (1986, 1998, 2002, 2010)",   fact:"Reached the 2010 quarterfinals, their best modern showing." },
+  "Qatar":        { apps:2,  best:"Group Stage (2022, 2026)",               fact:"Hosted 2022 — first Middle Eastern nation to host." },
+  "Switzerland":  { apps:12, best:"Quarterfinals (1934, 1938, 1954)",       fact:"Reached the Round of 16 in 4 of last 5 World Cups." },
+  "Brazil":       { apps:23, best:"Champions (1958, 1962, 1970, 1994, 2002)", fact:"Only nation to play in every World Cup since 1930." },
+  "Morocco":      { apps:7,  best:"4th Place (2022)",                       fact:"First African/Arab team to reach a WC semifinal (2022)." },
+  "Haiti":        { apps:2,  best:"Group Stage (1974, 2026)",               fact:"First WC appearance in 52 years since 1974." },
+  "Scotland":     { apps:9,  best:"Round of 1 (never past group stage)",    fact:"Famously never advanced past the group stage in 8 prior tries." },
+  "Australia":    { apps:6,  best:"Round of 16 (2006, 2022)",               fact:"Socceroos have reached R16 in their last 2 appearances." },
+  "Türkiye":      { apps:3,  best:"3rd Place (2002)",                       fact:"First WC appearance since their famous 2002 semifinal run." },
+  "Germany":      { apps:20, best:"Champions (1954, 1974, 1990, 2014)",     fact:"4-time champions; most successful European nation." },
+  "Curaçao":      { apps:1,  best:"Debut (2026)",                           fact:"Smallest nation by population ever to qualify for a WC." },
+  "Netherlands":  { apps:11, best:"Runners-up (1974, 1978, 2010)",          fact:"3-time finalists, yet to win a World Cup." },
+  "Japan":        { apps:8,  best:"Round of 16 (2002, 2010, 2018, 2022)",   fact:"Beat Germany and Spain in the 2022 group stage." },
+  "Ivory Coast":  { apps:4,  best:"Group Stage (3x)",                       fact:"Reigning AFCON champions, seeking first-ever WC win." },
+  "Ecuador":      { apps:5,  best:"Round of 16 (2006)",                     fact:"Have never lost an opening WC match (3-0-2)." },
+  "Sweden":       { apps:13, best:"Runners-up (1958, as hosts)",            fact:"Reached the 2018 quarterfinals, their best in 24 years." },
+  "Tunisia":      { apps:6,  best:"Group Stage (never advanced)",           fact:"Beat France 1-0 in 2022 but still didn't advance." },
+  "Spain":        { apps:16, best:"Champions (2010)",                       fact:"Reigning European champions (Euro 2024)." },
+  "Cape Verde":   { apps:1,  best:"Debut (2026)",                           fact:"Smallest African nation ever to reach the World Cup." },
+  "Belgium":      { apps:14, best:"3rd Place (2018)",                       fact:"Topped FIFA rankings during their 'Golden Generation' era." },
+  "Egypt":        { apps:4,  best:"Group Stage (never advanced)",           fact:"Salah's 2nd WC; missed 2018 knockouts despite his goals." },
+  "Saudi Arabia": { apps:6,  best:"Round of 16 (1994)",                     fact:"Stunned Argentina 2-1 at the 2022 World Cup." },
+  "Uruguay":      { apps:14, best:"Champions (1930, 1950)",                 fact:"Hosted & won the inaugural 1930 World Cup." },
+  "Iran":         { apps:6,  best:"Group Stage (never advanced)",           fact:"Beat Wales at the 2022 World Cup, missed knockouts." },
+  "New Zealand":  { apps:3,  best:"Group Stage (1982, 2010, 2026)",         fact:"Unbeaten at the 2010 WC (3 draws), but didn't advance." },
+  "France":       { apps:16, best:"Champions (1998, 2018)",                fact:"Runners-up in 2022 on penalties to Argentina." },
+  "Senegal":      { apps:4,  best:"Quarterfinals (2002)",                   fact:"Beat reigning champions France 1-0 in their WC debut (2002)." },
+  "Iraq":         { apps:1,  best:"Group Stage (1986)",                     fact:"First WC appearance in 40 years since 1986." },
+  "Norway":       { apps:4,  best:"Round of 16 (1994, 1998)",               fact:"First WC since 1998 — Haaland's tournament debut." },
+  "Argentina":    { apps:18, best:"Champions (1978, 1986, 2022)",           fact:"Defending champions; Messi's likely final World Cup." },
+  "Algeria":      { apps:5,  best:"Round of 16 (2014)",                     fact:"Famous 1982 'Disgrace of Gijón' upset of West Germany." },
+  "Austria":      { apps:8,  best:"3rd Place (1954)",                       fact:"First WC appearance since 1998 — a 28-year wait." },
+  "Jordan":       { apps:1,  best:"Debut (2026)",                           fact:"First-ever World Cup qualification in their history." },
+  "Portugal":     { apps:8,  best:"3rd Place (1966, 2006)",                 fact:"Cristiano Ronaldo's likely final World Cup, age 41." },
+  "DR Congo":     { apps:1,  best:"Debut (2026)",                           fact:"First WC as DR Congo (Zaire appeared in 1974)." },
+  "England":      { apps:16, best:"Champions (1966, as hosts)",             fact:"Reached the 2018 semis & 2022/2018 quarterfinals." },
+  "Croatia":      { apps:6,  best:"Runners-up (2018)",                      fact:"3rd place in 2022 — incredibly consistent since 2018." },
+  "Ghana":        { apps:5,  best:"Quarterfinals (2010)",                   fact:"One penalty kick from the 2010 semifinal vs Uruguay." },
+  "Panama":       { apps:2,  best:"Group Stage (2018, 2026)",               fact:"2nd-ever WC appearance, 8 years after their historic 2018 debut." },
+  "Uzbekistan":   { apps:1,  best:"Debut (2026)",                           fact:"First Central Asian nation to ever qualify for a WC." },
+  "Colombia":     { apps:7,  best:"Quarterfinals (2014)",                   fact:"James Rodríguez was the 2014 WC Golden Boot winner." },
+};
+function getHistory(team) { return TEAM_HISTORY[team] || null; }
+
+// ── HEAD-TO-HEAD HISTORY (tracked team matches) ──────────────────────────────
+const H2H = {
+  "Mexico|South Africa": "First-ever meeting between the two nations on the senior stage.",
+  "South Korea|Czechia": "Rarely met; Czechia's only previous meeting with Korea came in a 2012 friendly (1-0 Czechia).",
+  "Brazil|Morocco": "Brazil lead 2-1 across 3 meetings. Their only competitive clash was the 1998 World Cup — Brazil won 3-0. Morocco's first win over Brazil came in a 2023 friendly (2-1).",
+  "Haiti|Scotland": "First-ever meeting between the two nations.",
+  "Spain|Cape Verde": "First-ever meeting — Cape Verde's senior World Cup debut.",
+  "Ivory Coast|Ecuador": "Limited history; the sides have met only in friendlies, with Ecuador's pace troubling West African defenses historically.",
+  "France|Senegal": "France lead the head-to-head; Senegal's only major win came at the 2002 World Cup opener (1-0), a historic upset.",
+  "Argentina|Algeria": "First competitive meeting; Argentina have dominated African sides at recent World Cups.",
+  "Portugal|DR Congo": "First-ever meeting between the two nations.",
+  "England|Croatia": "Croatia have the edge in recent tournament meetings, including the 2018 WC semifinal (2-1 Croatia) and Euro 2020/2024 draws.",
+  "Ghana|Panama": "First-ever meeting between the two nations.",
+  "Uzbekistan|Colombia": "First-ever meeting — Uzbekistan's senior World Cup debut.",
+  "Czechia|Mexico": "Mexico have a slight historical edge in sporadic friendlies dating back decades.",
+  "Mexico|South Korea": "Mexico hold a narrow edge; both sides met as recently as a 2022 friendly (won by Korea 2-1).",
+  "Scotland|Brazil": "Brazil have won the only previous meeting (1998 friendly, 1-0 Brazil).",
+  "Curaçao|Ivory Coast": "First-ever meeting between the two nations.",
+  "Ecuador|Germany": "First-ever competitive meeting; Germany have historically dominated CONMEBOL sides not named Brazil/Argentina.",
+  "Panama|England": "First-ever meeting — Panama's only previous WC meeting with England came at the 2018 World Cup, a 6-1 England win.",
+  "Colombia|Portugal": "First-ever meeting between the two nations at any level.",
+  "Panama|Croatia": "First-ever meeting between the two nations.",
+  "Germany|Curaçao": "First-ever meeting — Curaçao's senior World Cup debut.",
+  "Germany|Ivory Coast": "Limited history; Germany have historically been strong vs African opposition at World Cups.",
+  "Ecuador|Curaçao": "First-ever meeting between the two nations.",
+  "Spain|Saudi Arabia": "Spain hold a 2-0 H2H edge from past friendlies (most recently a 2016 friendly, 1-0 Spain).",
+  "Uruguay|Spain": "Spain hold a narrow edge in recent meetings, with their last competitive clash a 2022 friendly draw.",
+  "Mexico|Czechia": "Mexico hold the historical edge in sporadic meetings.",
+};
+function getH2H(home, away) {
+  return H2H[home+"|"+away] || H2H[away+"|"+home] || "Limited prior meetings between these two nations at major tournaments — a fresh matchup on the world stage.";
+}
+
+function historyHTML(team) {
+  const h = getHistory(team);
+  if (!h) return "";
+  const flag = FLAGS[team]||"🏳️";
+  return `<div class="h2h-line"><strong>${flag} ${team}</strong> — ${h.apps} WC appearance${h.apps>1?"s":""} · Best: ${h.best}. <em>${h.fact}</em></div>`;
+}
+
+function scoreHTML(uid, home, away) {
+  return `
+  <div class="card-score">
+    <span class="score-label">📝 Final Score</span>
+    <input type="number" min="0" max="20" class="score-input" id="score-home-${uid}" placeholder="–" onchange="saveScore('${uid}')">
+    <span class="score-dash">–</span>
+    <input type="number" min="0" max="20" class="score-input" id="score-away-${uid}" placeholder="–" onchange="saveScore('${uid}')">
+    <span class="score-status" id="score-status-${uid}"></span>
+  </div>`;
+}
+
+// ── SCORE PERSISTENCE ────────────────────────────────────────────────────────
+// In-memory fallback store (persists for this session even if browser storage APIs fail)
+const _memoryScores = {};
+
+async function saveScore(uid) {
+  const h = document.getElementById(`score-home-${uid}`).value;
+  const a = document.getElementById(`score-away-${uid}`).value;
+  const statusEl = document.getElementById(`score-status-${uid}`);
+  const payload = JSON.stringify({h,a});
+
+  // Always keep an in-memory copy so the UI works regardless of storage backend
+  if (h === "" && a === "") { delete _memoryScores[uid]; } else { _memoryScores[uid] = payload; }
+
+  // Try persistent storage (best-effort, multiple strategies)
+  let persisted = false;
+  try {
+    if (window.storage && typeof window.storage.set === "function") {
+      if (h === "" && a === "") {
+        await window.storage.delete(`score-${uid}`, false);
+      } else {
+        await window.storage.set(`score-${uid}`, payload, false);
+      }
+      persisted = true;
+    }
+  } catch (e) { /* fall through */ }
+
+  if (!persisted) {
+    try {
+      if (h === "" && a === "") { localStorage.removeItem(`wc2026-score-${uid}`); }
+      else { localStorage.setItem(`wc2026-score-${uid}`, payload); }
+      persisted = true;
+    } catch (e) { /* fall through */ }
+  }
+
+  statusEl.textContent = persisted ? "✓ saved" : "✓ saved (this session)";
+  setTimeout(()=>{ statusEl.textContent=""; }, 1800);
+}
+
+async function loadScore(uid) {
+  let raw = _memoryScores[uid] || null;
+  if (!raw) {
+    try {
+      if (window.storage && typeof window.storage.get === "function") {
+        const result = await window.storage.get(`score-${uid}`, false);
+        if (result && result.value) raw = result.value;
+      }
+    } catch (e) { /* ignore */ }
+  }
+  if (!raw) {
+    try { raw = localStorage.getItem(`wc2026-score-${uid}`); } catch (e) { /* ignore */ }
+  }
+  if (raw) {
+    try {
+      const {h,a} = JSON.parse(raw);
+      const he = document.getElementById(`score-home-${uid}`);
+      const ae = document.getElementById(`score-away-${uid}`);
+      if (he) he.value = h;
+      if (ae) ae.value = a;
+    } catch (e) { /* ignore malformed */ }
+  }
+}
+
+async function loadAllScores() {
+  document.querySelectorAll('.score-input[id^="score-home-"]').forEach(el=>{
+    const uid = el.id.replace("score-home-","");
+    loadScore(uid);
+  });
+}
+const MATCHES = [
+  // GROUP STAGE
+  { date:"2026-06-11",time:"3:00 PM", group:"A",home:"Mexico",      away:"South Africa",       stadium:"Estadio Azteca",         stage:"Group Stage" },
+  { date:"2026-06-11",time:"10:00 PM",group:"A",home:"South Korea", away:"Czechia",            stadium:"Estadio Akron",          stage:"Group Stage" },
+  { date:"2026-06-12",time:"3:00 PM", group:"B",home:"Canada",      away:"Bosnia & Herzegovina",stadium:"BMO Field",             stage:"Group Stage" },
+  { date:"2026-06-12",time:"9:00 PM", group:"D",home:"USA",         away:"Paraguay",           stadium:"SoFi Stadium",           stage:"Group Stage" },
+  { date:"2026-06-13",time:"3:00 PM", group:"B",home:"Qatar",       away:"Switzerland",        stadium:"Levi's Stadium",         stage:"Group Stage" },
+  { date:"2026-06-13",time:"6:00 PM", group:"C",home:"Brazil",      away:"Morocco",            stadium:"MetLife Stadium",        stage:"Group Stage" },
+  { date:"2026-06-13",time:"9:00 PM", group:"C",home:"Haiti",       away:"Scotland",           stadium:"Gillette Stadium",       stage:"Group Stage" },
+  { date:"2026-06-14",time:"12:00 AM",group:"D",home:"Australia",   away:"Türkiye",            stadium:"BC Place",               stage:"Group Stage" },
+  { date:"2026-06-14",time:"1:00 PM", group:"E",home:"Germany",     away:"Curaçao",            stadium:"NRG Stadium",            stage:"Group Stage" },
+  { date:"2026-06-14",time:"4:00 PM", group:"F",home:"Netherlands", away:"Japan",              stadium:"AT&T Stadium",           stage:"Group Stage" },
+  { date:"2026-06-14",time:"7:00 PM", group:"E",home:"Ivory Coast", away:"Ecuador",            stadium:"Lincoln Financial Field", stage:"Group Stage" },
+  { date:"2026-06-14",time:"10:00 PM",group:"F",home:"Sweden",      away:"Tunisia",            stadium:"Estadio BBVA",           stage:"Group Stage" },
+  { date:"2026-06-15",time:"12:00 PM",group:"H",home:"Spain",       away:"Cape Verde",         stadium:"Mercedes-Benz Stadium",  stage:"Group Stage" },
+  { date:"2026-06-15",time:"3:00 PM", group:"G",home:"Belgium",     away:"Egypt",              stadium:"Lumen Field",            stage:"Group Stage" },
+  { date:"2026-06-15",time:"6:00 PM", group:"H",home:"Saudi Arabia",away:"Uruguay",            stadium:"Hard Rock Stadium",      stage:"Group Stage" },
+  { date:"2026-06-15",time:"9:00 PM", group:"G",home:"Iran",        away:"New Zealand",        stadium:"SoFi Stadium",           stage:"Group Stage" },
+  { date:"2026-06-16",time:"3:00 PM", group:"I",home:"France",      away:"Senegal",            stadium:"MetLife Stadium",        stage:"Group Stage" },
+  { date:"2026-06-16",time:"6:00 PM", group:"I",home:"Iraq",        away:"Norway",             stadium:"Gillette Stadium",       stage:"Group Stage" },
+  { date:"2026-06-16",time:"9:00 PM", group:"J",home:"Argentina",   away:"Algeria",            stadium:"Arrowhead Stadium",      stage:"Group Stage" },
+  { date:"2026-06-17",time:"12:00 AM",group:"J",home:"Austria",     away:"Jordan",             stadium:"Levi's Stadium",         stage:"Group Stage" },
+  { date:"2026-06-17",time:"1:00 PM", group:"K",home:"Portugal",    away:"DR Congo",           stadium:"NRG Stadium",            stage:"Group Stage" },
+  { date:"2026-06-17",time:"4:00 PM", group:"L",home:"England",     away:"Croatia",            stadium:"AT&T Stadium",           stage:"Group Stage" },
+  { date:"2026-06-17",time:"7:00 PM", group:"L",home:"Ghana",       away:"Panama",             stadium:"BMO Field",              stage:"Group Stage" },
+  { date:"2026-06-17",time:"10:00 PM",group:"K",home:"Uzbekistan",  away:"Colombia",           stadium:"Estadio Azteca",         stage:"Group Stage" },
+  { date:"2026-06-18",time:"12:00 PM",group:"A",home:"Czechia",     away:"South Africa",       stadium:"Mercedes-Benz Stadium",  stage:"Group Stage" },
+  { date:"2026-06-18",time:"3:00 PM", group:"B",home:"Switzerland", away:"Bosnia & Herzegovina",stadium:"SoFi Stadium",          stage:"Group Stage" },
+  { date:"2026-06-18",time:"6:00 PM", group:"B",home:"Canada",      away:"Qatar",              stadium:"BC Place",               stage:"Group Stage" },
+  { date:"2026-06-18",time:"9:00 PM", group:"A",home:"Mexico",      away:"South Korea",        stadium:"Estadio Akron",          stage:"Group Stage" },
+  { date:"2026-06-19",time:"3:00 PM", group:"D",home:"USA",         away:"Australia",          stadium:"Lumen Field",            stage:"Group Stage" },
+  { date:"2026-06-19",time:"6:00 PM", group:"C",home:"Scotland",    away:"Morocco",            stadium:"Gillette Stadium",       stage:"Group Stage" },
+  { date:"2026-06-19",time:"8:30 PM", group:"C",home:"Brazil",      away:"Haiti",              stadium:"Lincoln Financial Field", stage:"Group Stage" },
+  { date:"2026-06-19",time:"11:00 PM",group:"D",home:"Türkiye",     away:"Paraguay",           stadium:"Levi's Stadium",         stage:"Group Stage" },
+  { date:"2026-06-20",time:"1:00 PM", group:"F",home:"Netherlands", away:"Sweden",             stadium:"NRG Stadium",            stage:"Group Stage" },
+  { date:"2026-06-20",time:"4:00 PM", group:"E",home:"Germany",     away:"Ivory Coast",        stadium:"BMO Field",              stage:"Group Stage" },
+  { date:"2026-06-20",time:"8:00 PM", group:"E",home:"Ecuador",     away:"Curaçao",            stadium:"Arrowhead Stadium",      stage:"Group Stage" },
+  { date:"2026-06-21",time:"12:00 AM",group:"F",home:"Tunisia",     away:"Japan",              stadium:"Estadio BBVA",           stage:"Group Stage" },
+  { date:"2026-06-21",time:"12:00 PM",group:"H",home:"Spain",       away:"Saudi Arabia",       stadium:"Mercedes-Benz Stadium",  stage:"Group Stage" },
+  { date:"2026-06-21",time:"3:00 PM", group:"G",home:"Belgium",     away:"Iran",               stadium:"SoFi Stadium",           stage:"Group Stage" },
+  { date:"2026-06-21",time:"6:00 PM", group:"H",home:"Uruguay",     away:"Cape Verde",         stadium:"Hard Rock Stadium",      stage:"Group Stage" },
+  { date:"2026-06-21",time:"9:00 PM", group:"G",home:"New Zealand", away:"Egypt",              stadium:"BC Place",               stage:"Group Stage" },
+  { date:"2026-06-22",time:"1:00 PM", group:"J",home:"Argentina",   away:"Austria",            stadium:"AT&T Stadium",           stage:"Group Stage" },
+  { date:"2026-06-22",time:"5:00 PM", group:"I",home:"France",      away:"Iraq",               stadium:"Lincoln Financial Field", stage:"Group Stage" },
+  { date:"2026-06-22",time:"8:00 PM", group:"I",home:"Norway",      away:"Senegal",            stadium:"MetLife Stadium",        stage:"Group Stage" },
+  { date:"2026-06-22",time:"11:00 PM",group:"J",home:"Jordan",      away:"Algeria",            stadium:"Levi's Stadium",         stage:"Group Stage" },
+  { date:"2026-06-23",time:"1:00 PM", group:"K",home:"Portugal",    away:"Uzbekistan",         stadium:"NRG Stadium",            stage:"Group Stage" },
+  { date:"2026-06-23",time:"4:00 PM", group:"L",home:"England",     away:"Ghana",              stadium:"Gillette Stadium",       stage:"Group Stage" },
+  { date:"2026-06-23",time:"7:00 PM", group:"L",home:"Panama",      away:"Croatia",            stadium:"BMO Field",              stage:"Group Stage" },
+  { date:"2026-06-23",time:"10:00 PM",group:"K",home:"Colombia",    away:"DR Congo",           stadium:"Estadio Akron",          stage:"Group Stage" },
+  { date:"2026-06-24",time:"3:00 PM", group:"B",home:"Switzerland", away:"Canada",             stadium:"BC Place",               stage:"Group Stage" },
+  { date:"2026-06-24",time:"3:00 PM", group:"B",home:"Bosnia & Herzegovina",away:"Qatar",      stadium:"Lumen Field",            stage:"Group Stage" },
+  { date:"2026-06-24",time:"6:00 PM", group:"C",home:"Scotland",    away:"Brazil",             stadium:"Hard Rock Stadium",      stage:"Group Stage" },
+  { date:"2026-06-24",time:"6:00 PM", group:"C",home:"Morocco",     away:"Haiti",              stadium:"Mercedes-Benz Stadium",  stage:"Group Stage" },
+  { date:"2026-06-24",time:"9:00 PM", group:"A",home:"Czechia",     away:"Mexico",             stadium:"Estadio Azteca",         stage:"Group Stage" },
+  { date:"2026-06-24",time:"9:00 PM", group:"A",home:"South Africa",away:"South Korea",        stadium:"Estadio BBVA",           stage:"Group Stage" },
+  { date:"2026-06-25",time:"4:00 PM", group:"E",home:"Curaçao",     away:"Ivory Coast",        stadium:"Lincoln Financial Field", stage:"Group Stage" },
+  { date:"2026-06-25",time:"4:00 PM", group:"E",home:"Ecuador",     away:"Germany",            stadium:"MetLife Stadium",        stage:"Group Stage" },
+  { date:"2026-06-25",time:"7:00 PM", group:"F",home:"Japan",       away:"Sweden",             stadium:"AT&T Stadium",           stage:"Group Stage" },
+  { date:"2026-06-25",time:"7:00 PM", group:"F",home:"Tunisia",     away:"Netherlands",        stadium:"Arrowhead Stadium",      stage:"Group Stage" },
+  { date:"2026-06-25",time:"10:00 PM",group:"D",home:"Türkiye",     away:"USA",                stadium:"SoFi Stadium",           stage:"Group Stage" },
+  { date:"2026-06-25",time:"10:00 PM",group:"D",home:"Paraguay",    away:"Australia",          stadium:"Levi's Stadium",         stage:"Group Stage" },
+  { date:"2026-06-26",time:"3:00 PM", group:"I",home:"Norway",      away:"France",             stadium:"Gillette Stadium",       stage:"Group Stage" },
+  { date:"2026-06-26",time:"3:00 PM", group:"I",home:"Senegal",     away:"Iraq",               stadium:"BMO Field",              stage:"Group Stage" },
+  { date:"2026-06-26",time:"8:00 PM", group:"H",home:"Cape Verde",  away:"Saudi Arabia",       stadium:"NRG Stadium",            stage:"Group Stage" },
+  { date:"2026-06-26",time:"8:00 PM", group:"H",home:"Uruguay",     away:"Spain",              stadium:"Estadio Akron",          stage:"Group Stage" },
+  { date:"2026-06-26",time:"11:00 PM",group:"G",home:"Egypt",       away:"Iran",               stadium:"Lumen Field",            stage:"Group Stage" },
+  { date:"2026-06-26",time:"11:00 PM",group:"G",home:"New Zealand", away:"Belgium",            stadium:"BC Place",               stage:"Group Stage" },
+  { date:"2026-06-27",time:"5:00 PM", group:"L",home:"Panama",      away:"England",            stadium:"MetLife Stadium",        stage:"Group Stage" },
+  { date:"2026-06-27",time:"5:00 PM", group:"L",home:"Croatia",     away:"Ghana",              stadium:"Lincoln Financial Field", stage:"Group Stage" },
+  { date:"2026-06-27",time:"7:30 PM", group:"K",home:"Colombia",    away:"Portugal",           stadium:"Hard Rock Stadium",      stage:"Group Stage" },
+  { date:"2026-06-27",time:"7:30 PM", group:"K",home:"DR Congo",    away:"Uzbekistan",         stadium:"Mercedes-Benz Stadium",  stage:"Group Stage" },
+  { date:"2026-06-27",time:"10:00 PM",group:"J",home:"Algeria",     away:"Austria",            stadium:"Arrowhead Stadium",      stage:"Group Stage" },
+  { date:"2026-06-27",time:"10:00 PM",group:"J",home:"Jordan",      away:"Argentina",          stadium:"AT&T Stadium",           stage:"Group Stage" },
+  // ROUND OF 32
+  { date:"2026-06-28",time:"3:00 PM", match:"M73",home:"2nd Group A",  away:"2nd Group B",   stadium:"SoFi Stadium",           stage:"Round of 32", tbd:true },
+  { date:"2026-06-29",time:"1:00 PM", match:"M76",home:"1st Group C",  away:"2nd Group F",   stadium:"NRG Stadium",            stage:"Round of 32", tbd:true },
+  { date:"2026-06-29",time:"4:30 PM", match:"M74",home:"1st Group E",  away:"Best 3rd",      stadium:"Gillette Stadium",       stage:"Round of 32", tbd:true },
+  { date:"2026-06-29",time:"9:00 PM", match:"M75",home:"1st Group F",  away:"2nd Group C",   stadium:"Estadio BBVA",           stage:"Round of 32", tbd:true },
+  { date:"2026-06-30",time:"1:00 PM", match:"M78",home:"2nd Group E",  away:"2nd Group I",   stadium:"AT&T Stadium",           stage:"Round of 32", tbd:true },
+  { date:"2026-06-30",time:"5:00 PM", match:"M77",home:"1st Group I",  away:"Best 3rd",      stadium:"MetLife Stadium",        stage:"Round of 32", tbd:true },
+  { date:"2026-06-30",time:"9:00 PM", match:"M79",home:"1st Group A",  away:"Best 3rd",      stadium:"Estadio Azteca",         stage:"Round of 32", tbd:true },
+  { date:"2026-07-01",time:"12:00 PM",match:"M80",home:"1st Group L",  away:"Best 3rd",      stadium:"Mercedes-Benz Stadium",  stage:"Round of 32", tbd:true },
+  { date:"2026-07-01",time:"4:00 PM", match:"M82",home:"1st Group G",  away:"Best 3rd",      stadium:"Lumen Field",            stage:"Round of 32", tbd:true },
+  { date:"2026-07-01",time:"8:00 PM", match:"M81",home:"1st Group D",  away:"Best 3rd",      stadium:"Levi's Stadium",         stage:"Round of 32", tbd:true },
+  { date:"2026-07-02",time:"3:00 PM", match:"M84",home:"1st Group H",  away:"2nd Group J",   stadium:"SoFi Stadium",           stage:"Round of 32", tbd:true },
+  { date:"2026-07-02",time:"7:00 PM", match:"M83",home:"2nd Group K",  away:"2nd Group L",   stadium:"BMO Field",              stage:"Round of 32", tbd:true },
+  { date:"2026-07-02",time:"11:00 PM",match:"M85",home:"1st Group B",  away:"Best 3rd",      stadium:"BC Place",               stage:"Round of 32", tbd:true },
+  { date:"2026-07-03",time:"2:00 PM", match:"M88",home:"2nd Group D",  away:"2nd Group G",   stadium:"AT&T Stadium",           stage:"Round of 32", tbd:true },
+  { date:"2026-07-03",time:"6:00 PM", match:"M86",home:"1st Group J",  away:"2nd Group H",   stadium:"Hard Rock Stadium",      stage:"Round of 32", tbd:true },
+  { date:"2026-07-03",time:"9:30 PM", match:"M87",home:"1st Group K",  away:"Best 3rd",      stadium:"Arrowhead Stadium",      stage:"Round of 32", tbd:true },
+  // ROUND OF 16
+  { date:"2026-07-04",time:"1:00 PM", match:"M90",home:"W Match 73",  away:"W Match 75",     stadium:"NRG Stadium",            stage:"Round of 16", tbd:true },
+  { date:"2026-07-04",time:"5:00 PM", match:"M89",home:"W Match 74",  away:"W Match 77",     stadium:"Lincoln Financial Field", stage:"Round of 16", tbd:true },
+  { date:"2026-07-05",time:"4:00 PM", match:"M91",home:"W Match 76",  away:"W Match 78",     stadium:"MetLife Stadium",        stage:"Round of 16", tbd:true },
+  { date:"2026-07-05",time:"8:00 PM", match:"M92",home:"W Match 79",  away:"W Match 80",     stadium:"Estadio Azteca",         stage:"Round of 16", tbd:true },
+  { date:"2026-07-06",time:"3:00 PM", match:"M93",home:"W Match 83",  away:"W Match 84",     stadium:"AT&T Stadium",           stage:"Round of 16", tbd:true },
+  { date:"2026-07-06",time:"8:00 PM", match:"M94",home:"W Match 81",  away:"W Match 82",     stadium:"Lumen Field",            stage:"Round of 16", tbd:true },
+  { date:"2026-07-07",time:"12:00 PM",match:"M95",home:"W Match 86",  away:"W Match 88",     stadium:"Mercedes-Benz Stadium",  stage:"Round of 16", tbd:true },
+  { date:"2026-07-07",time:"4:00 PM", match:"M96",home:"W Match 85",  away:"W Match 87",     stadium:"BC Place",               stage:"Round of 16", tbd:true },
+  // QUARTERFINALS
+  { date:"2026-07-09",time:"4:00 PM", match:"QF1",home:"W M89",      away:"W M90",          stadium:"Gillette Stadium",       stage:"Quarterfinals", tbd:true },
+  { date:"2026-07-10",time:"3:00 PM", match:"QF2",home:"W M93",      away:"W M94",          stadium:"SoFi Stadium",           stage:"Quarterfinals", tbd:true },
+  { date:"2026-07-11",time:"5:00 PM", match:"QF3",home:"W M91",      away:"W M92",          stadium:"Hard Rock Stadium",      stage:"Quarterfinals", tbd:true },
+  { date:"2026-07-11",time:"9:00 PM", match:"QF4",home:"W M95",      away:"W M96",          stadium:"Arrowhead Stadium",      stage:"Quarterfinals", tbd:true },
+  // SEMIFINALS
+  { date:"2026-07-14",time:"3:00 PM", match:"SF1",home:"W QF1",      away:"W QF2",          stadium:"AT&T Stadium",           stage:"Semifinals", tbd:true },
+  { date:"2026-07-15",time:"3:00 PM", match:"SF2",home:"W QF3",      away:"W QF4",          stadium:"Mercedes-Benz Stadium",  stage:"Semifinals", tbd:true },
+  // FINAL
+  { date:"2026-07-18",time:"5:00 PM", match:"3PL",home:"Loser SF1",  away:"Loser SF2",      stadium:"Hard Rock Stadium",      stage:"Final", tbd:true },
+  { date:"2026-07-19",time:"3:00 PM", match:"FIN",home:"Winner SF1", away:"Winner SF2",     stadium:"MetLife Stadium",        stage:"Final", tbd:true },
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let activeTeams = new Set();
+let activeStage = "all";
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function dayLabel(d) {
+  return new Date(d+"T12:00:00").toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"}).toUpperCase();
+}
+function formatDate(d) {
+  return new Date(d+"T12:00:00").toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"});
+}
+function hlClass(m) {
+  if (m.tbd) return "";
+  const both = [m.home, m.away];
+  if (activeTeams.size > 0) {
+    const t = both.find(x => activeTeams.has(x));
+    return t ? TEAM_CLASS[t] : "";
+  }
+  const t = TRACKED.find(x => both.includes(x));
+  return t ? TEAM_CLASS[t] : "";
+}
+function teamHTML(name, side, isTbd, hl) {
+  if (isTbd) return `<div class="team-block ${side}"><span class="team-flag">⚽</span><div class="tbd-team">${name}</div></div>`;
+  const flag = FLAGS[name]||"🏳️";
+  const isTracked = TRACKED.includes(name) && (activeTeams.size===0 || activeTeams.has(name));
+  return `<div class="team-block ${side}">
+    <span class="team-flag">${flag}</span>
+    <div class="team-name${isTracked?" tracked":""}">${name}</div>
+  </div>`;
+}
+function playersHTML(home, away, hl) {
+  const hp = PLAYERS[home]||[];
+  const ap = PLAYERS[away]||[];
+  if (!hp.length && !ap.length) return "";
+  const chipColor = hl ? "rgba(0,0,0,0.07)" : "rgba(255,255,255,0.06)";
+  function chips(arr) {
+    return arr.map(p=>`<div class="player-chip">
+      <span class="player-name">${p.num?`<span class="jersey-num">#${p.num}</span> `:""}${p.n}</span>
+      <span class="player-role">${p.r}</span>
+      <span class="player-stat">📊 ${p.s}</span>
+    </div>`).join("");
+  }
+  return `
+    <div class="players-col">
+      <div class="players-col-title">${FLAGS[home]||""} ${home}</div>
+      ${chips(hp)}
+    </div>
+    <div class="players-col">
+      <div class="players-col-title">${FLAGS[away]||""} ${away}</div>
+      ${chips(ap)}
+    </div>`;
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function renderSchedule() {
+  const container = document.getElementById("schedule-container");
+  let filtered = MATCHES.filter(m => {
+    if (activeStage!=="all" && m.stage!==activeStage) return false;
+    if (activeTeams.size>0) {
+      if (m.tbd) return false;
+      return activeTeams.has(m.home)||activeTeams.has(m.away);
+    }
+    return true;
+  });
+  if (!filtered.length) {
+    container.innerHTML=`<div class="empty-state"><h3>No matches found</h3><p>Try adjusting your filters</p></div>`;
+    return;
+  }
+  const stageOrder=["Group Stage","Round of 32","Round of 16","Quarterfinals","Semifinals","Final"];
+  const stageLabels={"Group Stage":"Group Stage","Round of 32":"Round of 32","Round of 16":"Round of 16","Quarterfinals":"Quarterfinals","Semifinals":"Semifinals","Final":"3rd Place & Final"};
+  const byStage={};
+  filtered.forEach(m=>{
+    if(!byStage[m.stage]) byStage[m.stage]={};
+    if(!byStage[m.stage][m.date]) byStage[m.stage][m.date]=[];
+    byStage[m.stage][m.date].push(m);
+  });
+  let html="";
+  stageOrder.forEach(sn=>{
+    if(!byStage[sn]) return;
+    const dates=Object.keys(byStage[sn]).sort();
+    html+=`<div class="stage-header">${stageLabels[sn]}</div>`;
+    dates.forEach(date=>{
+      const ms=byStage[sn][date];
+      html+=`<div class="date-group"><div class="date-header">
+        <span class="date-day">${dayLabel(date)}</span>
+        <span class="date-full">${formatDate(date)}</span>
+        <span class="match-count">${ms.length} match${ms.length>1?"es":""}</span>
+      </div><div class="matches-grid">`;
+      ms.forEach((m,i)=>{
+        const hl = hlClass(m);
+        const isHighlighted = !!hl;
+        const st = STADIUMS[m.stadium]||{city:"",cap:""};
+        const gBadge = m.group ? `Group ${m.group}` : (m.match||"");
+        const uid = `m-${m.date}-${(m.home+m.away).replace(/[^a-zA-Z0-9]/g,'')}`;
+        const hasPl = !m.tbd && (PLAYERS[m.home]||[]).length>0;
+        html+=`<div class="match-card${isHighlighted?" highlighted "+hl:""}${m.tbd?" tbd":""}">
+          <div class="card-main">
+            ${teamHTML(m.home,"home",m.tbd,hl)}
+            <div class="vs-block">
+              <div class="vs-time">${m.time}</div>
+              <div class="vs-label">ET</div>
+              <span class="group-badge">${gBadge}</span>
+            </div>
+            ${teamHTML(m.away,"away",m.tbd,hl)}
+          </div>
+          <div class="card-venue">
+            <span class="venue-icon">🏟️</span>
+            <span class="venue-name">${m.stadium}</span>
+            <span class="venue-sep">·</span>
+            <span class="venue-city">${st.city}</span>
+            <span class="venue-cap">Cap. ${st.cap}</span>
+          </div>
+          ${!m.tbd ? `
+          <button class="toggle-h2h" onclick="toggleH2H('h2h-${uid}',this)">
+            <span class="h2h-icon">📜</span> History &amp; Head-to-Head <span class="toggle-icon" id="icon-h2h-${uid}">▾</span>
+          </button>
+          <div class="card-h2h" id="h2h-${uid}">
+            ${historyHTML(m.home)}
+            ${historyHTML(m.away)}
+            <div class="h2h-line"><strong>Head-to-head:</strong> ${getH2H(m.home,m.away)}</div>
+          </div>` : ""}
+          ${!m.tbd ? scoreHTML(uid, m.home, m.away) : ""}
+          ${hasPl ? `
+          <button class="toggle-players" onclick="togglePlayers('${uid}',this)">
+            ⚽ Players to Watch <span class="toggle-icon" id="icon-${uid}">▼</span>
+          </button>
+          <div class="card-players" id="${uid}">
+            ${playersHTML(m.home,m.away,isHighlighted)}
+          </div>` : ""}
+        </div>`;
+      });
+      html+=`</div></div>`;
+    });
+  });
+  container.innerHTML=html;
+  loadAllScores();
+}
+
+function togglePlayers(uid, btn) {
+  const panel = document.getElementById(uid);
+  const icon  = document.getElementById("icon-"+uid);
+  const open  = panel.classList.toggle("open");
+  icon.classList.toggle("open", open);
+  icon.textContent = open ? "▲" : "▼";
+}
+
+function toggleH2H(uid, btn) {
+  const panel = document.getElementById(uid);
+  const icon  = document.getElementById("icon-"+uid);
+  const open  = panel.classList.toggle("open");
+  icon.textContent = open ? "▴" : "▾";
+}
+
+function toggleTeam(btn) {
+  const t = btn.dataset.team;
+  activeTeams.has(t) ? activeTeams.delete(t) : activeTeams.add(t);
+  btn.classList.toggle("active");
+  renderSchedule();
+}
+
+function filterStage(btn) {
+  document.querySelectorAll(".stage-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  activeStage = btn.dataset.stage;
+  renderSchedule();
+}
+
+renderSchedule();
+</script>
+</body>
+</html>
